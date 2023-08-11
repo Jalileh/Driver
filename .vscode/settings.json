@@ -1,0 +1,54 @@
+{
+  "editor.fontFamily": "Source Code Pro",
+  "editor.fontWeight": "500",
+
+  "editor.fontSize": 13,
+  "hide-files.files": [
+    "FindWDK"
+  ],
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "FindWDK": true
+  },
+  "C_Cpp.errorSquiggles": "enabled",
+  "files.associations": {
+    "system_error": "cpp",
+    "type_traits": "cpp",
+    "xtr1common": "cpp",
+    "xutility": "cpp",
+    "charconv": "cpp",
+    "chrono": "cpp",
+    "format": "cpp",
+    "locale": "cpp",
+    "xlocale": "cpp"
+  },
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#372a2a",
+    "activityBar.background": "#372a2a",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#287828",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "commandCenter.border": "#e7e7e799",
+    "sash.hoverBorder": "#372a2a",
+    "statusBar.background": "#1a1414",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#372a2a",
+    "statusBarItem.remoteBackground": "#1a1414",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#1a1414",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#1a141499",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#1a1414",
+  "workbench.editor.limit.value": 5,
+  "workbench.editor.limit.perEditorGroup": true,
+  "workbench.editor.limit.enabled": true
+}
+
