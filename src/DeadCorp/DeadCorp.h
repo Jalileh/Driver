@@ -127,3 +127,4 @@ namespace objs
   Process_Object_Query FetchProcs(Process_Object_Manager*  out_Manager);
   
 }
+int GetStringSize(void * source_buffer, int in_sizeof_type);

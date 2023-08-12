@@ -331,15 +331,7 @@ uint64 Find_Exe_ByName(SYSTEM_MASTER_INTERFACE * _MASTER)
                           
                     auto peb = PsGetProcessSectionBaseAddress(proc);
                     
-                    if(!peb)
-                    {
-
-                        print("empty");
-                    }
-                    else  
-                    {
-                        output("Module", (uint64*)peb);
-                    }
+                     
 
                     found_proc = true;
                     ModuleBase = (uint64)peb;
@@ -353,13 +345,11 @@ uint64 Find_Exe_ByName(SYSTEM_MASTER_INTERFACE * _MASTER)
                     if(Manager->QueryProcess((wchar_t*)api->Name, &aQueriedProc) == NotFoundInQuery)
                     {
                         Manager->RegisterData_Object((wchar_t*)api->Name, Process->UniqueProcessId,(uint64) ModuleBase);
-
                     }
                     else
                     {
                       aQueriedProc->ModuleBase = ModuleBase;
                       aQueriedProc->oldHandle = Process->UniqueProcessId;
-
                     }
                     ObDereferenceObject(proc);
                     //! BUGFIX FOR EXISting OBJ
@@ -408,7 +398,7 @@ void DumpCpu(SYSTEM_MASTER_INTERFACE * _MASTER)
   void_ptr * Source = zero;
 
     if(api->cpu_arg == SystemProcessInformation)
-           Source = (void_ptr*) &cpu->PROC_data;
+          Source = (void_ptr*) &cpu->PROC_data;
     else
           Source = (void_ptr*) &cpu->KERNEL_data;
     
@@ -425,6 +415,7 @@ void DumpCpu(SYSTEM_MASTER_INTERFACE * _MASTER)
         print("Preparing process size DiagNostics:");
         *Source = tool::allocPool_NP(info_length);  
         ZwQuerySystemInformation(api->cpu_arg, *Source, info_length, 0);
+    
 }
 ptr_SysMaster  Api_DC::init_sysMaster(void_ptr AOH)
 { 

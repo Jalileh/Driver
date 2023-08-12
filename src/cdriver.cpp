@@ -80,6 +80,7 @@ bool ReadModule(PCOMMUNE UM)
         Process_Object_Manager Manager = {0};
         Process_Object aQuieredProc = {0};
         auto funcs = objs::FetchProcs(&Manager);
+        
         if(!funcs->KnownProcess(UM->ModuleName, UM->ModuleBase, &aQuieredProc, UM->stat))
             UM->ModuleBase = GetProcess((wchar_t*)UM->ModuleName);
 
@@ -156,7 +157,7 @@ void CommHandler(PCOMMUNE UM)
 }
 int64 __fastcall Hooked_1(int64  a1, int64 a2, unsigned int a3)
 {
-    if(a3 == 10)
+    if(a3 == 0x194993)
     {         
         auto um = recast<PCOMMUNE>(a1);
         CommHandler(um);

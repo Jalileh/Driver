@@ -27,17 +27,16 @@ bool KnownProcess(const wchar_t* ProcessName, uint64 & ModBase, Process_Object  
 
        if(Manager->QueryProcess((wchar_t*)ProcessName, &aQueriedProc) == NotFoundInQuery) 
        { 
-          print("QueryProcess fail. this process does not exist, returning false >: GetProcess > realloc SysMaster"); 
+          print("KnownProcess(), !!QueryProcess fail. this process does not exist, returning false >: GetProcess > realloc SysMaster"); 
           return Unknown; 
        } 
        else 
        { 
-            print("AqueriedProc found!"); 
+            print("KnownProcess() FOUND ACQUIRED PROC in QueryCall!"); 
   
              if(aQueriedProc->oldHandle == nullptr) 
              { 
-                print("old handle got cleared elsewhere"); 
-                 
+                print("KnownProcess() old handle got cleared elsewhere"); 
                 return Unknown;  
              } 
              else 
@@ -49,26 +48,28 @@ bool KnownProcess(const wchar_t* ProcessName, uint64 & ModBase, Process_Object  
                    if(invalid_cid == STATUS_INVALID_CID) 
                    { 
                       notify_remote = REMOTE_NOTIFY_DEAD;
-                     print("INVALID CID DEAD PROCESS."); 
+                      print("KnownProcess() INVALID CID DEAD PROCESS."); 
                    } 
                    else 
                    { 
-                     uint64 pid_modulebase = (uint64)PsGetProcessSectionBaseAddress(proc); 
-                     bool IsKnownProcess = true;  
-                     byte_ptr ProcName = (byte_ptr)(proc) + Eprocess_FileName_Off; 
-  
-                       for(int i = 0; i < Max_Compare; i++, ProcName++) 
-                       {    
-                         char achar = (char) (*ProcName); 
-  
-                             if(aQueriedProc->HashName[i] == (achar ^ HashName_key)) 
-                                 print("Matching !!!!!"); 
-                             else 
-                             { 
-                               if(*ProcName != NULL)
-                                   IsKnownProcess = false; 
-                             } 
-                       } 
+                      uint64 pid_modulebase = (uint64)PsGetProcessSectionBaseAddress(proc); 
+                      bool IsKnownProcess = true;  
+                      byte_ptr ProcName = (byte_ptr)(proc) + Eprocess_FileName_Off; 
+                      print((const char*)ProcName);
+                      wchar_t * StoredHash = aQueriedProc->HashName;
+
+                         for(; *ProcName;  StoredHash++, ProcName++) 
+                         {    
+                           char achar = (char) (*ProcName);
+
+                               if(*StoredHash == (achar ^ HashName_key)) 
+                                   print("Matching !!!!!"); 
+                               else 
+                               { 
+                                  print("UNKNOWNPROCESS(LOOPSTR) NO MATCHING UNKNOWN");
+                                    IsKnownProcess = false; 
+                               } 
+                         } 
   
                            if(IsKnownProcess) 
                            { 
@@ -82,6 +83,7 @@ bool KnownProcess(const wchar_t* ProcessName, uint64 & ModBase, Process_Object  
                            else
                            {
                                 notify_remote = REMOTE_NOTIFY_DEAD;
+                                ObDereferenceObject(proc); 
                            }
                    }     
              } 
@@ -101,16 +103,18 @@ typedef struct AliveObjects
 
 bool QueryProcess(wchar_t * Name, Process_Object * ManagedProcess_out )
 {
-          print("Querying Managed Processes -------");
-
+          print("Querying Managed Processes -------");  
+              int HashSize = 4;
               aliveObjects_ptr aoh = recast<aliveObjects_ptr>(AliveObjectHandler);
               for(int i = 0; i < AOH_OBJHANDLER_MAX; i++)
               {
                    //! min 4 process name chars
+
+                  
                     
-                    if(!memcmp(Name, aoh->Process[i].HashName, 4))
+                    if(!memcmp(Name, aoh->Process[i].HashName,  HashSize))
                     {
-                        print("Found Existing Object, returning");
+                        print("(QUERYPROCESS STRCMP LINK )Found Existing Object, returning");
                           *ManagedProcess_out = &aoh->Process[i];
 
                         return PROCESS_FOUND;                      
@@ -149,7 +153,8 @@ void RegisterData_Object(wchar_t* Name, void_ptr handle, uint64 ModuleBase)
       print("Entry Page 2: Retrieved a free object slot");
 
       memcpy(Object->HashName, Name, 0x100);
-      
+      //Object->size_hash = GetStringSize(Object->HashName, sizeof(wchar_t));
+      //printval("SizeHash", &Object->id, "int");
       Object->oldHandle = handle;
       Object->ModuleBase = ModuleBase;
       
@@ -162,7 +167,7 @@ void setup_initialization(void_ptr in_aoh)
             {
                 aoh->Process[i].id = i;
                 aoh->Process[i].HashName = (wchar_t*)alloc(0x100);
-                aoh->Process[i].oldHandle = (wchar_t*)alloc(8);
+                //aoh->Process[i].oldHandle = (wchar_t*)alloc(8);
                 aoh->Process[i].size_hash = 0;
             }
 }
@@ -177,8 +182,6 @@ void setup_QM(Process_Object_Query Process_Query, Process_Object_Manager Process
   Process_Manager->GetFreeRegisterObject = &GetFreeRegisterObject;
   Process_Manager->QueryProcess = &QueryProcess;
   Process_Query->KnownProcess = &KnownProcess;
-
-  
 }
 Process_Object_Query objs::FetchProcs(Process_Object_Manager * out_Manager)
 {
@@ -200,4 +203,33 @@ Process_Object_Query objs::FetchProcs(Process_Object_Manager * out_Manager)
       return global::Process_Query;
     }
     
+}
+
+#define max_pool 100
+int GetStringSize(void * source_buffer, int in_sizeof_type)
+{
+ 
+    wchar_t * type_wchar = nullptr;
+    char * type_char = nullptr;
+    int result = 0;
+    
+        void * memBuffer = (void*)tool::allocPool_NP(max_pool);
+        memcpy(memBuffer, source_buffer, max_pool);
+            
+            type_char = (char*)memBuffer;
+            type_wchar = (wchar_t*)memBuffer;
+            
+        if(in_sizeof_type == sizeof(wchar_t))
+        {
+            for(; *type_wchar;  type_wchar++)
+                result++;
+        }
+        else
+        {
+            for(; *type_char;  type_char++)
+                result++;
+        }
+        
+    tool::FreePool(memBuffer);
+    return result;
 }

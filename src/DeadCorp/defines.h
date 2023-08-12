@@ -10,7 +10,7 @@
 /*
 ?DEBUG MODE PRINT DISABLE FOR RElEASE */
 
-#define DEBUG_SWITCH 0
+#define DEBUG_SWITCH 1
 
 #define AC_BOTH 1
 
