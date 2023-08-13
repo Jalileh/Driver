@@ -63,7 +63,7 @@ bool KnownProcess(const wchar_t* ProcessName, uint64 & ModBase, Process_Object  
                            char achar = (char) (*ProcName);
 
                                if(*StoredHash == (achar ^ HashName_key)) 
-                                   print("Matching !!!!!"); 
+                                  IsKnownProcess = true;
                                else 
                                { 
                                   print("UNKNOWNPROCESS(LOOPSTR) NO MATCHING UNKNOWN");
