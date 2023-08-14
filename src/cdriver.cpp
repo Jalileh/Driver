@@ -53,6 +53,7 @@ typedef struct Commune
   int mode;
   int stat;
   bool status_online;
+  bool um_restart;
 } commune, * PCOMMUNE;
 
   static PCOMMUNE um_cb = zero;
@@ -81,7 +82,12 @@ bool ReadModule(PCOMMUNE UM)
         Process_Object aQuieredProc = {0};
         auto funcs = objs::FetchProcs(&Manager);
         
-        if(!funcs->KnownProcess(UM->ModuleName, UM->ModuleBase, &aQuieredProc, UM->stat))
+        if(UM->um_restart)
+        {
+           UM->ModuleBase = GetProcess((wchar_t*)UM->ModuleName);
+           UM->um_restart = false;
+        }
+        else if(!funcs->KnownProcess(UM->ModuleName, UM->ModuleBase, &aQuieredProc, UM->stat))
             UM->ModuleBase = GetProcess((wchar_t*)UM->ModuleName);
 
         if(!passid)

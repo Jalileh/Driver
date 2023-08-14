@@ -73,12 +73,18 @@ bool KnownProcess(const wchar_t* ProcessName, uint64 & ModBase, Process_Object  
   
                            if(IsKnownProcess) 
                            { 
-                                print("Known Process, skipping sysMaster reallocation!"); 
-                                ModBase = pid_modulebase;    
-                                ObDereferenceObject(proc); 
-                                *out_aQueriedProc = aQueriedProc;
-                                notify_remote = REMOTE_NOTIFY_SAFE;
-                                return true; 
+                              print("Known Process, skipping sysMaster reallocation!"); 
+                              ObDereferenceObject(proc); 
+                                
+                              if(pid_modulebase != aQueriedProc->ModuleBase)
+                                  return false;
+
+                              ModBase = pid_modulebase;    
+                              *out_aQueriedProc = aQueriedProc;
+
+                                
+                              notify_remote = REMOTE_NOTIFY_SAFE;
+                              return true; 
                            }
                            else
                            {

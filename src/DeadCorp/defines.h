@@ -10,7 +10,7 @@
 /*
 ?DEBUG MODE PRINT DISABLE FOR RElEASE */
 
-#define DEBUG_SWITCH 1
+#define DEBUG_SWITCH 0
 
 #define AC_BOTH 1
 
@@ -60,7 +60,7 @@ vm easy stack com
  */
 
         
-#define AOH_OBJHANDLER_MAX 4
+#define AOH_OBJHANDLER_MAX 16
 
 
 #if DEBUG_SWITCH == 1
