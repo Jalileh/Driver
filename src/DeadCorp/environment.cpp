@@ -11,9 +11,25 @@
 #define HashName_key L'D'
 #define Max_Compare 4 
 
-#define REMOTE_NOTIFY_DEAD 20189
+#define REMOTE_NOTIFY_DEAD 0x4EDD
 #define REMOTE_NOTIFY_SAFE 1
 
+bool callback_GetKProcess(void(*callbackfunc)(pvoid kProcess, pvoid _UM),pvoid UM, pvoid Handle, int & notify_remote){
+
+  PEPROCESS  proc = {0}; 
+  NTSTATUS  invalid_cid; 
+  invalid_cid = PsLookupProcessByProcessId(Handle, &proc); 
+  
+          if(invalid_cid == STATUS_INVALID_CID) 
+          { 
+             notify_remote = REMOTE_NOTIFY_DEAD;
+             return false;
+          } 
+                   
+  callbackfunc(proc, UM);  
+  ObDereferenceObject(proc);
+  return true;
+}
 bool KnownProcess(const wchar_t* ProcessName, uint64 & ModBase, Process_Object  * out_aQueriedProc, int & notify_remote) 
 { 
   print(" KnownProcess Entry fetch PRE");

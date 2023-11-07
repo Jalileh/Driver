@@ -415,7 +415,6 @@ void DumpCpu(SYSTEM_MASTER_INTERFACE * _MASTER)
         print("Preparing process size DiagNostics:");
         *Source = tool::allocPool_NP(info_length);  
         ZwQuerySystemInformation(api->cpu_arg, *Source, info_length, 0);
-    
 }
 ptr_SysMaster  Api_DC::init_sysMaster(void_ptr AOH)
 { 

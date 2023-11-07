@@ -128,3 +128,5 @@ namespace objs
   
 }
 int GetStringSize(void * source_buffer, int in_sizeof_type);
+
+bool callback_GetKProcess(void(*callbackfunc)(pvoid kProcess, pvoid UM),pvoid UM, pvoid Handle, int & notify_remote);

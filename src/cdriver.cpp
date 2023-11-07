@@ -24,15 +24,21 @@ static HiveMaster st_hivemaster;
 static hiveWorker worker1;
  
 
-#define COMM_READ_FROM_MODULE 0
-#define COMM_READFROM_ADDRESS 1
-#define COMM_WRITE_TO_ADDRESS 2
+
+#define COMM_READ_VIRTUAL 1
+#define COMM_WRITE_VIRTUAL 0x7879
 #define COMM_GETMODULE 3
+
+
+#define COMM_GET_EPROCESS 0x1942
+#define COMM_READ_KERNEL 0xdead2
+#define COMM_WRITE_KERNEL 0xdead1
+ 
 #define COMM_NEWINSTANCE 0x400
 #define COMM_CHECK_STATE 0x1900
 #define COMM_ESTABLISHED 0x4932
-#define COMM_WRITE_VIRTUAL 0x7879
 #define COMM_DRIVER_RUNNING 0x19930
+
 
 static void_ptr physmeme = 0;
 typedef struct Commune
@@ -71,8 +77,12 @@ typedef struct Commune
 #define commerr(str, error)  return error
 #endif
 
-
-
+#define peb_offset 0x550
+#define ldr_offset 0x18
+#define ldr_size 0x7c8
+typedef unsigned char * pbyte;
+typedef unsigned long long * pqword;
+          
 bool ReadModule(PCOMMUNE UM)
 {  
 
@@ -105,61 +115,126 @@ bool ReadModule(PCOMMUNE UM)
     memcpy((char *)um_cb->RelayInfo, str, 100);
     return ret;
  }
-    bool COMM_callbackError( bool(*cb_error)(const char*, bool), const char * str, bool stat)
-    {
-          return cb_error(str, stat);
-    }
-void ReadAddress(PCOMMUNE UM)
-{
-  if(!UM->ModuleBase)
-    return;
-
+  bool COMM_callbackError( bool(*cb_error)(const char*, bool), const char * str, bool stat)
+  {
+        return cb_error(str, stat);
+  }
   
-    
-    if(UM->mode == COMM_READFROM_ADDRESS)
-    {    
-        Process_Object aQueriedProc = {0}; Process_Object_Manager Manager = {0};
-        auto funcs = objs::FetchProcs(&Manager);
-          
-        if(funcs->KnownProcess(UM->ModuleName, UM->ModuleBase, &aQueriedProc, UM->stat))
-        {
-          dm::ReadPhys(aQueriedProc->oldHandle, UM->Address, UM->Size_Read, UM->dump_analysis);
-        }
-    }
-    else if(UM->mode == COMM_WRITE_VIRTUAL)
-    {
-        
-        Process_Object aQueriedProc = {0}; Process_Object_Manager Manager = {0};
-        auto funcs = objs::FetchProcs(&Manager);
+void Read_VirtualMemory(PCOMMUNE UM)
+{
+  if(!UM->ModuleBase) return;
 
-        if(funcs->KnownProcess(UM->ModuleName, UM->ModuleBase, &aQueriedProc, UM->stat))
-        {
-          dm::WriteToPhys(aQueriedProc->oldHandle, UM->Address, UM->Size_Write, UM->value_ptr); 
-        }
+  Process_Object aQueriedProc = {0}; 
+  Process_Object_Manager Manager = {0};
+  auto funcs = objs::FetchProcs(&Manager);
+    
+    if(funcs->KnownProcess(UM->ModuleName, UM->ModuleBase, &aQueriedProc, UM->stat))
+    {
+      dm::ReadPhys(aQueriedProc->oldHandle, UM->Address, UM->Size_Read, UM->dump_analysis);
     }
 }
-  void GreatWall(PCOMMUNE UM)
-  {
-      if(UM->stat == COMM_NEWINSTANCE)
-      {
-        print("CD 1.0 V");
-        print("New Connection");
-        um_cb = UM;
-        UM->stat = COMM_ESTABLISHED;
-      }
-      if(UM->mode == COMM_DRIVER_RUNNING)
-      {
-        UM->status_online = true;
-      }
+void Write_VirtualMemory(PCOMMUNE UM)
+{
+  if (!UM->ModuleBase) return;
+
+  Process_Object aQueriedProc = {0};
+  Process_Object_Manager Manager = {0};
+  auto funcs = objs::FetchProcs(&Manager);
+
+    if (funcs->KnownProcess(UM->ModuleName, UM->ModuleBase, &aQueriedProc, UM->stat))
+    {
+        dm::WriteToPhys(aQueriedProc->oldHandle, UM->Address, UM->Size_Write, UM->value_ptr);
+    }
+}
+void copykernelMemory(pvoid dst, pvoid source, size_t size){
+  memcpy(dst, source, size );
+}
+void cb_getEPROCESS(pvoid kProcess, pvoid _UM){
+  uint64 PEPROCESS = (uint64)kProcess;
+  PCOMMUNE um = (PCOMMUNE)_UM;
+  copykernelMemory(um->dump_analysis, &PEPROCESS, 8 );
+}    
+void GET_EPROCESS(PCOMMUNE UM){
+  Process_Object_Manager Manager = {0};
+  Process_Object aQuieredProc = {0};
+  auto funcs = objs::FetchProcs(&Manager);
+     
+    if(funcs->KnownProcess(UM->ModuleName, UM->ModuleBase, &aQuieredProc, UM->stat)){ 
+      callback_GetKProcess(&cb_getEPROCESS, UM, aQuieredProc->oldHandle, UM->stat);
+    }
+}
+void Read_Kernel_Memory(PCOMMUNE UM)
+{
+  if(!UM->ModuleBase) return;
+
+  Process_Object aQueriedProc = {0}; 
+  Process_Object_Manager Manager = {0};
+  auto funcs = objs::FetchProcs(&Manager);
+    
+  if (funcs->KnownProcess(UM->ModuleName, UM->ModuleBase, &aQueriedProc, UM->stat)){
+      copykernelMemory((pvoid)UM->dump_analysis, (pvoid) UM->Address , UM->Size_Write);
   }
+}
+void Write_Kernel_Memory(PCOMMUNE UM)
+{
+  if (!UM->ModuleBase) return;
+
+  Process_Object aQueriedProc = {0};
+  Process_Object_Manager Manager = {0};
+  auto funcs = objs::FetchProcs(&Manager);
+
+  if (funcs->KnownProcess(UM->ModuleName, UM->ModuleBase, &aQueriedProc, UM->stat)){
+      copykernelMemory((pvoid)UM->Address, (pvoid) UM->value_ptr, UM->Size_Write);
+  }
+}
+void GreatWall(PCOMMUNE UM)
+{
+    if(UM->stat == COMM_NEWINSTANCE)
+    {
+      print("CD 1.0 V");
+      print("New Connection");
+      um_cb = UM;
+      UM->stat = COMM_ESTABLISHED;
+    }
+    if(UM->mode == COMM_DRIVER_RUNNING)
+    {
+      UM->status_online = true;
+    }
+}
 void CommHandler(PCOMMUNE UM)
 { 
   GreatWall(UM);
 
-    if(UM->mode == COMM_GETMODULE)
+  switch( UM->mode )  {
+    case COMM_GETMODULE: {
         ReadModule(UM);
-    else  
-    ReadAddress(UM);
+        return;
+    }
+    case COMM_GET_EPROCESS: {
+        GET_EPROCESS(UM);
+        return;
+    }
+    case COMM_READ_VIRTUAL: {
+        Read_VirtualMemory(UM);
+        return;
+    }
+    case COMM_WRITE_VIRTUAL: {
+        Write_VirtualMemory(UM);
+        return;
+    }
+    case COMM_READ_KERNEL: {
+        Read_Kernel_Memory(UM);
+        return;
+    }
+    case COMM_WRITE_KERNEL: {
+        Write_Kernel_Memory(UM);
+        return;
+    }
+  }
+    
+    
+    
+     
 }
 int64 __fastcall Hooked_1(int64  a1, int64 a2, unsigned int a3)
 {
