@@ -171,7 +171,7 @@ void Read_Kernel_Memory(PCOMMUNE UM)
   Process_Object_Manager Manager = {0};
   auto funcs = objs::FetchProcs(&Manager);
     
-  if (funcs->KnownProcess(UM->ModuleName, UM->ModuleBase, &aQueriedProc, UM->stat)){
+  if(funcs->KnownProcess(UM->ModuleName, UM->ModuleBase, &aQueriedProc, UM->stat)){
       copykernelMemory((pvoid)UM->dump_analysis, (pvoid) UM->Address , UM->Size_Write);
   }
 }
@@ -183,8 +183,8 @@ void Write_Kernel_Memory(PCOMMUNE UM)
   Process_Object_Manager Manager = {0};
   auto funcs = objs::FetchProcs(&Manager);
 
-  if (funcs->KnownProcess(UM->ModuleName, UM->ModuleBase, &aQueriedProc, UM->stat)){
-      copykernelMemory((pvoid)UM->Address, (pvoid) UM->value_ptr, UM->Size_Write);
+  if(funcs->KnownProcess(UM->ModuleName, UM->ModuleBase, &aQueriedProc, UM->stat)){
+    copykernelMemory((pvoid)UM->Address, (pvoid) UM->value_ptr, UM->Size_Write);
   }
 }
 void GreatWall(PCOMMUNE UM)
