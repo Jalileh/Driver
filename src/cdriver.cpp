@@ -147,12 +147,14 @@ void Write_VirtualMemory(PCOMMUNE UM)
     }
 }
 void copykernelMemory(pvoid dst, pvoid source, size_t size){
-  memcpy(dst, source, size );
+  auto temp = tool::allocPool_NP(size);
+  memcpy(temp, source, size );
+  memcpy(dst, temp, size );
+  tool::FreePool(temp);
 }
 void cb_getEPROCESS(pvoid kProcess, pvoid _UM){
-  uint64 PEPROCESS = (uint64)kProcess;
-  PCOMMUNE um = (PCOMMUNE)_UM;
-  copykernelMemory(um->dump_analysis, &PEPROCESS, 8 );
+ // uint64 PEPROCESS = (uint64)kProcess;
+ // PCOMMUNE um = (PCOMMUNE)_UM;
 }    
 void GET_EPROCESS(PCOMMUNE UM){
   Process_Object_Manager Manager = {0};
@@ -160,8 +162,9 @@ void GET_EPROCESS(PCOMMUNE UM){
   auto funcs = objs::FetchProcs(&Manager);
      
     if(funcs->KnownProcess(UM->ModuleName, UM->ModuleBase, &aQuieredProc, UM->stat)){ 
-      callback_GetKProcess(&cb_getEPROCESS, UM, aQuieredProc->oldHandle, UM->stat);
+      copykernelMemory(UM->dump_analysis, &aQuieredProc->EPROCESS, 8 );
     }
+  
 }
 void Read_Kernel_Memory(PCOMMUNE UM)
 {

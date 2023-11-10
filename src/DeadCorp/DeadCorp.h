@@ -105,6 +105,7 @@ typedef struct _Process_Object
       HANDLE oldHandle;
       int size_hash;
       int id;
+      uint64 EPROCESS;
 } PROCESS_OBJECT, * Process_Object;
 
 typedef struct zProcess_Object_Query

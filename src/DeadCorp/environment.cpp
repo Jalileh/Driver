@@ -70,6 +70,7 @@ bool KnownProcess(const wchar_t* ProcessName, uint64 & ModBase, Process_Object  
                    { 
                       uint64 pid_modulebase = (uint64)PsGetProcessSectionBaseAddress(proc); 
                       bool IsKnownProcess = true;  
+                      aQueriedProc->EPROCESS = (uint64)proc;
                       byte_ptr ProcName = (byte_ptr)(proc) + Eprocess_FileName_Off; 
                       print((const char*)ProcName);
                       wchar_t * StoredHash = aQueriedProc->HashName;
