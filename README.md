@@ -12,6 +12,10 @@ This driver is an **unsigned driver**—technically malware, much like anti-chea
 
 The development process was riddled with PC/VM crashes, and I was only able to get the driver to its current state after much trial and error. I would strongly recommend writing **user-mode wrapped kernel code** rather than directly writing kernel-level code—unless, of course, you can run a virtual machine.
 
+The driver is mapped to lala-land region in ring 0 with no module identifier,
+if I recall correctly from there my usermode .dll sends a windows dataptr named \REDACTED/ and from there my nonsense implementation of hivemind
+goes onto become a temporary/permanent middle man for \REDACTED/ and after that our comlib dll interfaces all our completely legitimate calls to \REDACTED/.
+
 ---
 
 ## Reflection
