@@ -1,17 +1,23 @@
-ATTENTION
-This Project is on display only to show people where I was 3 years ago and I highly advise not trying to get this to work or use any of the code without knowing what you're doing.
-Neither do I recommend using the code for if I recall correctly there is a serious bug present in the knownProcess implementation which may trick your usermode comm that the process is still running and you may r/w to another process that took the PID
+# ⚠️ Attention
 
-About
-This Driver is an unsigned driver technically malware just like anti cheats, but the purpose of it was to protect my cheat customers from said anticheats.
-Tons of crashes happened until I got the driver to this state and would recommend people to write usermode wrapped kernel code rather than write it on the kernel unless you can run a vm.
+This project is displayed **only** to showcase where I was 3 years ago. I **highly advise** against trying to use or modify this code without a thorough understanding of what you’re doing. 
 
+Additionally, I **do not recommend** using this code as it contains a serious bug in the `knownProcess` implementation. This bug may cause the user-mode communication to mistakenly believe that a process is still running, leading to potential read/write operations on another process that has taken the same PID.
 
-Anyway regardless of how terrible I perceive the implementation of my crazy ideas back then i am so glad I did this, 
-although learning computer science, assembly and literally bit by bit manipulation by doing projects like these will not impress HR enough to even give you a baby-junior unpaid intership in ANY TECH FIELD.  
+---
 
+## About
 
+This driver is an **unsigned driver**—technically malware, much like anti-cheat software. However, its purpose was to **protect my cheat customers** from said anti-cheats.  
 
+The development process was riddled with crashes, and I was only able to get the driver to its current state after much trial and error. I would strongly recommend writing **user-mode wrapped kernel code** rather than directly writing kernel-level code—unless, of course, you can run a virtual machine.
 
+---
 
+## Reflection
 
+Despite my perception of the implementation as terrible, I’m glad I undertook this project. Through it, I learned about computer science, assembly, and bit-by-bit manipulation.  
+
+That said, it's worth noting that projects like this will likely not impress HR teams enough to even consider offering you a baby-junior unpaid internship in **any tech field**.
+
+---
