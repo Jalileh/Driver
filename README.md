@@ -10,7 +10,7 @@ Additionally, I **do not recommend** using this code as it contains a serious bu
 
 This driver is an **unsigned driver**—technically malware, much like anti-cheat software. However, its purpose was to **protect my cheat customers** from said anti-cheats.  
 
-The development process was riddled with crashes, and I was only able to get the driver to its current state after much trial and error. I would strongly recommend writing **user-mode wrapped kernel code** rather than directly writing kernel-level code—unless, of course, you can run a virtual machine.
+The development process was riddled with PC/VM crashes, and I was only able to get the driver to its current state after much trial and error. I would strongly recommend writing **user-mode wrapped kernel code** rather than directly writing kernel-level code—unless, of course, you can run a virtual machine.
 
 ---
 
