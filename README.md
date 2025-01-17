@@ -19,7 +19,7 @@ I worked so hard during this period I remember, this repo is technically a fork 
 I can't even fathom how I managed to do all of this back then, let alone the will-power to learn so much and to make these projects work. I was definitely more of an enthusiast back then.
 More private archives will be releasing if finding a job gets more tiresome so stay tuned!
 <div>
-Needles to say the sheer intuition, constant trial and error and unbreakable dedication I put into my hobby around 2022-2023 has benefited me so much e.g intuitive programming.  
+Needles to say the journey, constant trial and error and unbreakable dedication I put into my hobby around 2022-2023 has benefited me so much e.g intuitive programming.  
 If I'm not sounding too arrogant I at least believe HR is wrong in judging me as a weak candidate for a baby/junior UNPAID intership in non-compiled languages.
 </div>
 
