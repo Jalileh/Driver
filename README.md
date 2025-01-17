@@ -1,5 +1,5 @@
 # ⚠️ Attention
-This project is displayed **ONLY** to showcase what I was doing 3 years ago compared to an IT student taking classes. I **highly advise** against trying to use or modify this code without a thorough understanding of what you’re doing. 
+This project is displayed **ONLY** to showcase what I was doing 3 years ago. I **highly advise** against trying to use or modify this code without a thorough understanding of what you’re doing. 
 
 Additionally, I **do not recommend** using this code as it contains a serious bug in the `knownProcess` implementation. This bug may cause the user-mode communication to mistakenly believe that a process is still running, leading to potential read/write operations on another process that has taken the same PID.
 
